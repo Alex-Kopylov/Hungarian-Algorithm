@@ -1,6 +1,7 @@
 import java.util.*
 
-data class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String) {
+data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:String) {
+
     fun getSize(): Int {
         return Matrix.size
     }
@@ -20,6 +21,10 @@ data class MatrixClass(private val Matrix:Array<IntArray>, private val Name:Stri
     }
     fun outputToFile(){
 
+    }
+    fun hungarianAlgoritthm(){
+        val hungarian = HungarianAlgorithm(Matrix)
+       Matrix=hungarian.StepByStep()
     }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

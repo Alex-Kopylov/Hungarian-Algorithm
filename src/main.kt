@@ -4,9 +4,11 @@ object MainKt{
 
     @JvmStatic
     fun main(args: Array<String>) {
-      addNewMatrix()
+
         addNewMatrix()
+        Matrixes[0].hungarianAlgoritthm()
         printMatrixeS()
+
     }
 
     fun addNewMatrix(){
@@ -31,5 +33,9 @@ object MainKt{
         for(matrixCounter in 0 until Matrixes.size) {
             Matrixes[matrixCounter].printMatrix()
         }
+    }
+    fun printSingleMatrix(Index: Int)
+    {
+        Matrixes[Index].printMatrix()
     }
 }
