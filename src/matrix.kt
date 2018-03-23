@@ -1,6 +1,9 @@
+import java.io.File
+import java.io.InputStream
 import java.util.*
 
 data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:String) {
+
 
     fun getSize(): Int {
         return Matrix.size
@@ -22,7 +25,7 @@ data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:Stri
     fun outputToFile(){
 
     }
-    fun hungarianAlgoritthm(){
+    fun hungarianAlgorithm(){
         val hungarian = HungarianAlgorithm(Matrix)
        Matrix=hungarian.StepByStep()
     }

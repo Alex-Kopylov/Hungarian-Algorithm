@@ -1,12 +1,13 @@
 object MainKt{
     val Matrixes:MutableList<MatrixClass> = mutableListOf()
-
+//    val file: InputStream = File("Name.txt").inputStream()
 
     @JvmStatic
     fun main(args: Array<String>) {
 
+
         addNewMatrix()
-        Matrixes[0].hungarianAlgoritthm()
+        Matrixes[0].hungarianAlgorithm()
         printMatrixeS()
 
     }
@@ -18,7 +19,7 @@ object MainKt{
 
         println("Enter size of matrix")
         val sizeOfMatrix: Int = readLine()!!.toInt()
-        val matrix= Array(sizeOfMatrix, {IntArray(sizeOfMatrix)})
+        var matrix= Array(sizeOfMatrix, {IntArray(sizeOfMatrix)})
 
 
         for(i in 0 until sizeOfMatrix)
@@ -27,7 +28,10 @@ object MainKt{
                 matrix[i][j]= readLine()!!.toInt()
             }
         println("Set name of matrix")
+
+//        matrix.file.bufferedReader().use { it.readText().toInt() }
         return (MatrixClass(matrix,readLine().toString()))
+
     }
     fun printMatrixeS(){
         for(matrixCounter in 0 until Matrixes.size) {
