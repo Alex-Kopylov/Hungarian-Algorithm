@@ -4,7 +4,7 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
     fun StepByStep(): Array<IntArray> {
         Step1()
         Step2()
-//     Step3()
+        Step3()
         return Matrix
     }
 
@@ -100,12 +100,6 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
                     if (Matrix[i][j] < min)
                         min = Matrix[i][j]
             }
-        for (i in 0 until MatrixSize)
-            for (j in 0 until MatrixSize) {
-                if (!((coveredI.contains(i) || coveredJ.contains(j))))
-                    if (Matrix[i][j] < min)
-                        min = Matrix[i][j]
-            }
 
 
         for (i in 0 until MatrixSize)
@@ -130,6 +124,10 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
 
         return Step3()
     }
+
+
+
+
     fun Step4(){
 
 
