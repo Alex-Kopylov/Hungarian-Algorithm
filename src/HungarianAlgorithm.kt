@@ -41,24 +41,15 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
     // reduce the columns by subtracting the minimum value of each
     // column from that column.
     fun Step2() {
-        var flag = false
-        var min = 0
-        for (j in 0 until MatrixSize) {
-            flag = false
-            var min = 0
-
-            for (i in 0 until MatrixSize)
-                if (Matrix[i][j] == 0) {
-                    flag = true
-                    break
-                } else
-                    if (Matrix[i][j] < min)
-                        min = Matrix[i][j]
-
-            if (flag == false)
-                for (i in 0 until MatrixSize)
-                    Matrix[i][j]-=min
-        }
+    var min:Int
+    for (j in 0 until MatrixSize) {
+        min = Matrix[0][j]
+        for (i in 1 until MatrixSize)
+            if (Matrix[i][j] < min)
+                min = Matrix[i][j]
+        for (i in 0 until MatrixSize)
+            Matrix[i][j]-=min
+    }
     }
 
 
