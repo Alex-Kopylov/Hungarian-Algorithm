@@ -10,10 +10,11 @@ data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:Stri
     }
     fun printMatrix(){
         println("Name:$Name")
-        for(i in 0 until Matrix.size)
-            for (j in 0 until Matrix.size){
-                println("[$i][$j]=${Matrix[i][j]}")
-
+        for(i in 0 until Matrix.size){
+            for (j in 0 until Matrix.size) {
+                print("${Matrix[i][j]}\t")
+            }
+            print("\n")
             }
     }
     fun getName(): String{
