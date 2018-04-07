@@ -60,7 +60,7 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
 
         var min= Int.MAX_VALUE
         var zeroMaxI=0
-        var zeroMaxColumn=0
+        var zeroMaxInColumn=0
         var zeroMaxJ=0
         var toCoverColumn: Int? = null
         var toCoverRow: Int? =null
@@ -68,6 +68,7 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
         var zeroesUncoveredColumn= mutableListOf<Int>()
         var n=0
 
+        //counting zeroes
         for(row in 0 until MatrixSize)
             for (column in 0 until MatrixSize)
                 if (Matrix[row][column]==0) {
@@ -79,31 +80,33 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
         {
             //searching max number of zeros in rows
             zeroMaxI = 0
-            for (i in 0 until MatrixSize)
+            for (i in 0 until MatrixSize) {
+                if (coveredRows.contains(i))
+                    continue
                 if (zeroMaxI < zeroesUncoveredRow.count { it == i }) {
                     zeroMaxI = zeroesUncoveredRow.count { it == i }
-                    toCoverRow=i
+                    toCoverRow = i
                 }
-
+            }
             //searching max number of zeros in columns
             zeroMaxJ = 0
             for (j in 0 until MatrixSize) {
                 if (coveredCollumns.contains(j))
                     continue
-                zeroMaxColumn = 0
+                zeroMaxInColumn = 0
 
                 for (i in 0 until MatrixSize)
                     if (Matrix[i][j] == 0 && zeroesUncoveredColumn.contains(j)) {
-                        zeroMaxColumn++
+                        zeroMaxInColumn++
                     }
-                if (zeroMaxColumn > zeroMaxJ) {
-                    zeroMaxJ = zeroMaxColumn
+                if (zeroMaxInColumn > zeroMaxJ) {
+                    zeroMaxJ = zeroMaxInColumn
                     toCoverColumn = j
                 }
             }
 
 
-            if (zeroMaxI > zeroMaxJ) {
+            if (zeroMaxI >= zeroMaxJ) {
                 n = 0
                 while (true) {
                     if (n >= zeroesUncoveredRow.size)
