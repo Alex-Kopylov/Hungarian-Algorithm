@@ -2,8 +2,14 @@ import java.io.File
 import java.io.InputStream
 import java.util.*
 
-data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:String) {
+data class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String) {
 
+    var hungarianAssigment: IntArray? =null
+       get() {
+           if (field==null)
+              field=HungarianAlgorithm(Matrix).StepByStep()
+            return field
+       }
 
     fun getSize(): Int {
         return Matrix.size
@@ -11,11 +17,21 @@ data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:Stri
     fun printMatrix(){
         println("Name:$Name")
         for(i in 0 until Matrix.size){
-            for (j in 0 until Matrix.size) {
+            for (j in 0 until Matrix.size)
                 print("${Matrix[i][j]}\t")
-            }
             print("\n")
             }
+    }
+    fun printMatrixHungarian(){
+        println("Name:$Name")
+        for(i in 0 until Matrix.size){
+            for (j in 0 until Matrix.size)
+                if (j== hungarianAssigment!![i])
+                    print("[${Matrix[i][j]}]\t")
+                else
+                    print("${Matrix[i][j]}\t")
+            print("\n")
+        }
     }
     fun getName(): String{
         return Name
@@ -25,10 +41,6 @@ data class MatrixClass(private var Matrix:Array<IntArray>, private val Name:Stri
     }
     fun outputToFile(){
 
-    }
-    fun hungarianAlgorithm(){
-        val hungarian = HungarianAlgorithm(Matrix)
-       Matrix=hungarian.StepByStep()
     }
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

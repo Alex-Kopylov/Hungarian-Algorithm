@@ -7,7 +7,7 @@ object MainKt{
 
 
         addNewMatrix()
-        Matrixes[0].hungarianAlgorithm()
+
         printMatrixeS()
 
     }
@@ -43,6 +43,8 @@ object MainKt{
     fun printMatrixeS(){
         for(matrixCounter in 0 until Matrixes.size) {
             Matrixes[matrixCounter].printMatrix()
+            println("Hungarian:")
+            Matrixes[matrixCounter].printMatrixHungarian()
         }
     }
     fun printSingleMatrix(Index: Int)

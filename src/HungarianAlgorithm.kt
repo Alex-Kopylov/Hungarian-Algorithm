@@ -1,11 +1,18 @@
-class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
-    val MatrixSize = Matrix.size
-
-    fun StepByStep(): Array<IntArray> {
+class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
+    val MatrixSize = MatrixLegacy.size
+    val Matrix=Array(MatrixSize, {IntArray(MatrixSize)})
+    var counter=0
+    val assigmentRows= IntArray(MatrixSize)// Index of the column selected by every row (The final result)
+    val occupiedCols=BooleanArray(MatrixSize)//Verify that all column are occupied, used in the optimization step
+    fun StepByStep(): IntArray {
+        for(row in 0 until MatrixSize)
+            Matrix[row] = MatrixLegacy[row].clone()
         Step1()
         Step2()
         Step3()
-        return Matrix
+        Optimization()
+
+        return assigmentRows
     }
 
     fun Checker(): Boolean {
@@ -52,11 +59,26 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
     }
     }
 
-
+    fun countZeroesInRow(i:Int): Int {
+        return Matrix[i].count { it==0 }
+    }
+    fun countZeroesInColumn(j: Int):Int{
+        var result=0
+        for(i in 0 until MatrixSize)
+            if(Matrix[i][j]==0)
+                result++
+        return result
+    }
     fun Step3() {
-        val coveredCollumns = mutableListOf<Int>()
+//        println("------------")
+//        for(i in 0 until Matrix.size){
+//            for (j in 0 until Matrix.size) {
+//                print("${Matrix[i][j]}\t")
+//            }
+//            print("\n")
+//        }
+        val coveredColumns = mutableListOf<Int>()
         val coveredRows = mutableListOf<Int>()
-
 
         var min= Int.MAX_VALUE
         var zeroMaxI=0
@@ -67,130 +89,53 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
         var zeroesUncoveredRow= mutableListOf<Int>()
         var zeroesUncoveredColumn= mutableListOf<Int>()
         var n=0
-
+        var VerHor: Int? =null
         //counting zeroes
         for(row in 0 until MatrixSize)
-            for (column in 0 until MatrixSize)
+            loop@ for (column in 0 until MatrixSize)
                 if (Matrix[row][column]==0) {
-                    zeroesUncoveredColumn.add(column)
-                    zeroesUncoveredRow.add(row)
-                }
-
-        while (!zeroesUncoveredColumn.isEmpty()) // or Row. It doesn't matter
-        {
-            //searching max number of zeros in rows
-            zeroMaxI = 0
-            for (i in 0 until MatrixSize) {
-                if (coveredRows.contains(i))
-                    continue
-                if (zeroMaxI < zeroesUncoveredRow.count { it == i }) {
-                    zeroMaxI = zeroesUncoveredRow.count { it == i }
-                    toCoverRow = i
-                }
-            }
-            //searching max number of zeros in columns
-            zeroMaxJ = 0
-            for (j in 0 until MatrixSize) {
-                if (coveredCollumns.contains(j))
-                    continue
-                zeroMaxInColumn = 0
-
-                for (i in 0 until MatrixSize)
-                    if (Matrix[i][j] == 0 && zeroesUncoveredColumn.contains(j)) {
-                        zeroMaxInColumn++
-                    }
-                if (zeroMaxInColumn > zeroMaxJ) {
-                    zeroMaxJ = zeroMaxInColumn
-                    toCoverColumn = j
-                }
-            }
-
-
-            if (zeroMaxI >= zeroMaxJ) {
-                n = 0
-                while (true) {
-                    if (n >= zeroesUncoveredRow.size)
-                        break
-                    if (zeroesUncoveredRow[n] == toCoverRow) {
-                        zeroesUncoveredColumn.removeAt(n)
-                        zeroesUncoveredRow.removeAt(n)
-                    }
-                    else
-                         n++
-                }
-                coveredRows.add(toCoverRow!!)
-            }
-            else {
-                n = 0
-                while (true) {
-                    if (n >= zeroesUncoveredColumn.size)
-                        break
-                    if (zeroesUncoveredColumn[n] == toCoverColumn) {
-                        zeroesUncoveredColumn.removeAt(n)
-                        zeroesUncoveredRow.removeAt(n)
+                    VerHor=VerticalOrHorizontal(row,column)
+                    when{
+                        coveredColumns.contains(column) && coveredRows.contains(row)->
+                            continue@loop
+                        coveredColumns.contains(column)->
+                            continue@loop
+                        coveredRows.contains(row)->
+                            continue@loop
+                        else->
+                                if (VerHor>0)
+                                    coveredColumns.add(column)
+                                else
+                                    coveredRows.add(row)
 
                     }
-                    else
-                        n++
-                }
-                coveredCollumns.add(toCoverColumn!!)
-            }
-        }
-//        for (k in 0 until MatrixSize)
-//            for (l in 0 until MatrixSize) {
-//                 zeroCounterIMAX = 0
-//                 zeroCounterJMAX = 0
-//
-//
-//
-//
-//
-//                for (i in 0 until MatrixSize)
-//                    for (j in 0 until MatrixSize) {
-//                        if (Matrix[i][j] == 0 && !(coveredCollumns.contains(i) || coveredRows.contains(j))) {
-//                            zeroCounterI = 0
-//                            zeroCounterJ = 0
-//                            for (k in 0 until MatrixSize)
-//                                if (Matrix[k][j] == 0)
-//                                    zeroCounterJ++
-//                            for (l in 0 until MatrixSize)
-//                                if (Matrix[i][l] == 0)
-//                                    zeroCounterI++
-//                            when {
-//                                zeroCounterI > zeroCounterJ ->
-//                                    coveredCollumns.add(i)
-//                                zeroCounterI < zeroCounterJ ->
-//                                    coveredRows.add(j)
-//
-//                            }
-//                        }
-//                    }
-//            }
 
-        if(coveredCollumns.size==coveredRows.size)
+                }
+
+        if(counter==MatrixSize)
             return
+        counter++
 
 
-
-            //Add the minimum uncovered element
-            // to every covered element.
-            // If an element is covered twice,
-            // add the minimum element to it twice.
-            min= Int.MAX_VALUE
+        //Add the minimum uncovered element
+        // to every covered element.
+        // If an element is covered twice,
+        // add the minimum element to it twice.
+        min= Int.MAX_VALUE
         for (i in 0 until MatrixSize)
             for (j in 0 until MatrixSize) {
-                if (!((coveredCollumns.contains(i) || coveredRows.contains(j))))
+                if (!((coveredColumns.contains(j) || coveredRows.contains(i))))
                     if (Matrix[i][j] < min)
                         min = Matrix[i][j]
             }
 
 
         for (i in 0 until MatrixSize)
-                for (j in 0 until MatrixSize) {
-                    if (coveredCollumns.contains(i) && coveredRows.contains(j)) //if zero covered twice
-                        Matrix[i][j] += min + min
-                    else
-                        if (coveredCollumns.contains(i) || coveredRows.contains(j))
+                for (j in 0 until MatrixSize)
+                    when {
+                        (coveredColumns.contains(j) && coveredRows.contains(i))-> //if zero covered twice
+                            Matrix[i][j] += min*2
+                         (coveredColumns.contains(j) || coveredRows.contains(i))->
                             Matrix[i][j] += min
                 }
 
@@ -201,19 +146,33 @@ class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
                 for (j in 0 until MatrixSize)
                     if (Matrix[i][j]<min)
                         min=Matrix[i][j]
-            for (i in 0 until MatrixSize)
+            for (i in 0 until MatrixSize)  //Subtract the minimum element
                 for (j in 0 until MatrixSize)
-                    Matrix[i][j]-=min
+                Matrix[i][j]-=min
 
         return Step3()
     }
 
+    fun VerticalOrHorizontal(row: Int, column: Int)= (compareValues(countZeroesInColumn(column),countZeroesInRow(row)))
+//        1->1 //Column>Row
+//        -1->-1//Column<Row
+//        0->0//Column==Row
 
-
-
-    fun Step4(){
-
-
+    fun Optimization(row:Int):Boolean {
+        if (row == assigmentRows.size) // If all rows were assigned a cell
+            return true
+        for (column in 0 until assigmentRows.size) {
+            if (Matrix[row][column] == 0 && occupiedCols[column] == false) {
+                assigmentRows[row] = column
+                occupiedCols[column] = true // Mark the column as reserved
+                if (Optimization(row+1))
+                    return true
+                occupiedCols[column]=false
+            }
+        }
+        return false
     }
+    fun Optimization():Boolean=Optimization(0)
+
 }
 
