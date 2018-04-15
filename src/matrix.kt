@@ -1,16 +1,16 @@
-import java.io.File
-import java.io.InputStream
-import java.util.*
+class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String) {
 
-data class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String) {
-
-    var hungarianAssigment: IntArray? =null
+    private var hungarianAssignment: IntArray? =null
        get() {
-           if (field==null)
-              field=HungarianAlgorithm(Matrix).StepByStep()
+           if (field==null) {
+               println("Should it be traced in file? (type YES)")
+               field = if (readLine()=="YES")
+                   HungarianAlgorithm(Matrix).StepByStep(Name)
+               else
+                   HungarianAlgorithm(Matrix).StepByStep()
+           }
             return field
        }
-
     fun getSize(): Int {
         return Matrix.size
     }
@@ -21,38 +21,22 @@ data class MatrixClass(private val Matrix:Array<IntArray>, private val Name:Stri
                 print("${Matrix[i][j]}\t")
             print("\n")
             }
+
     }
     fun printMatrixHungarian(){
-        println("Name:$Name")
+        println("Hungarian:")
         for(i in 0 until Matrix.size){
             for (j in 0 until Matrix.size)
-                if (j== hungarianAssigment!![i])
+                if (j== hungarianAssignment!![i])
                     print("[${Matrix[i][j]}]\t")
                 else
                     print("${Matrix[i][j]}\t")
             print("\n")
         }
     }
-    fun getName(): String{
-        return Name
-    }
-    fun getMatrix(): Array<IntArray> {
-        return Matrix
-    }
+    fun getName()=Name
+    fun getMatrix()=Matrix
     fun outputToFile(){
 
-    }
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as MatrixClass
-
-        if (!Arrays.equals(Matrix, other.Matrix)) return false
-
-        return true
-    }
-    override fun hashCode(): Int {
-        return Arrays.hashCode(Matrix)
     }
 }

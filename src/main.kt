@@ -1,54 +1,108 @@
-object MainKt{
-    val Matrixes:MutableList<MatrixClass> = mutableListOf()
-//    val file: InputStream = File("Name.txt").inputStream()
+import kotlin.system.exitProcess
 
+object MainKt {
+    private val Matrices: MutableList<MatrixClass> = mutableListOf()
+//    val file: InputStream = File("Name.txt").inputStream()
     @JvmStatic
     fun main(args: Array<String>) {
-
-
-        addNewMatrix()
-
-        printMatrixeS()
-
-    }
-
-    fun addNewMatrix(){
-        Matrixes.add(newMatrix())
-    }
-    fun newMatrix(): MatrixClass {
-//
-//        println("Enter size of matrix")
-//        val sizeOfMatrix: Int = readLine()!!.toInt()
-
-        var matrix= Array(5, {IntArray(5)})
-        matrix[0]= intArrayOf(10,19,8,15,19)
-        matrix[1]= intArrayOf(10,18,7,17,19)
-        matrix[2]= intArrayOf(13,16,9,14,19)
-        matrix[3]= intArrayOf(12,19,8,18,19)
-        matrix[4]= intArrayOf(14,17,10,19,19)
-//
-//
-//        for(i in 0 until sizeOfMatrix)
-//            for (j in 0 until sizeOfMatrix){
-//                println("[$i][$j]=")
-//                matrix[i][j]= readLine()!!.toInt()
-//            }
-//        println("Set name of matrix")
-//
-////        matrix.file.bufferedReader().use { it.readText().toInt() }
-//        return (MatrixClass(matrix,readLine().toString()))
-        return MatrixClass(matrix,"name")
-
-    }
-    fun printMatrixeS(){
-        for(matrixCounter in 0 until Matrixes.size) {
-            Matrixes[matrixCounter].printMatrix()
-            println("Hungarian:")
-            Matrixes[matrixCounter].printMatrixHungarian()
+        while (true) {
+            printMenu()
+            println("Choice:")
+            menu(readLine()!!)
         }
     }
-    fun printSingleMatrix(Index: Int)
-    {
-        Matrixes[Index].printMatrix()
+    private fun printMenu() {
+        println("1-> Add new matrix\n" +
+                "2-> Print matrix\n" +
+                "3-> Print matrices\n" +
+                "Any other-> Exit")
+    }
+    private fun menu(choice: Any) {
+        when(choice) {
+            "1"-> addNewMatrix()
+            "2"->{
+                if (Matrices.isEmpty()) {
+                    println("You entered not any matrix")
+                    return
+                }
+                println("Choose matrix to print it on screen")
+                for (k in 0 until Matrices.size)
+                {
+                    println("$k->${Matrices[k].getName()}")
+                }
+                var i:Int
+                while (true) {
+                    i= readLine()!!.toInt()
+                    try {
+                        if ( i < 0 || i > Matrices.size)
+                            throw Exception("Out of range")
+                    } catch (e: Exception) {
+                        print("ERROR:$e\n" +
+                                "enter correct number:")
+                        continue
+                    }
+                    break
+                }
+                printMatrix(i)
+            }
+            "3"->printMatrix ()
+            else->exitProcess(0)
+        }
+    }
+    private fun addNewMatrix() {
+        Matrices.add(newMatrix())
+    }
+    private fun addNewMatrux
+    private fun newMatrix(): MatrixClass {
+        var size: Int
+        while (true) {
+            println("Enter size of matrix")
+            try {
+                size = readLine()!!.toInt()
+                if ( size <= 0 )
+                    throw Exception("Size can't be <=0")
+            } catch (e: Exception) {
+                println("ERROR:$e")
+                continue
+            }
+            break
+        }
+
+
+
+        val matrix = Array(size, { IntArray(size) })
+        println("Enter matrix (separate elements by ' ' or ','")
+
+        var i = 0
+        while (i < size) {
+            print("[$i]\t")
+            try {
+                matrix[i] = readLine()!!.split(",", " ").map { it.toInt() }.toIntArray()
+                if (matrix[i].size != size) {
+                    throw
+                    Exception("Not enough elements (Matrix[$i].size:${matrix[i].size} != $size)")
+                }
+            } catch (e: Exception) {
+                println("ERROR:$e")
+                i--
+            }
+            i++
+        }
+        return MatrixClass(matrix, "name")
+    }
+    private fun printMatrix() {
+        if (Matrices.isEmpty()) {
+            println("You entered not any matrix")
+            return
+        }
+        for (matrixCounter in 0 until Matrices.size) {
+            Matrices[matrixCounter].printMatrix()
+            Matrices[matrixCounter].printMatrixHungarian()
+            print("\n\n")
+        }
+    }
+    private fun printMatrix(i:Int) {
+        Matrices[i].printMatrix()
+        Matrices[i].printMatrixHungarian()
     }
 }

@@ -1,44 +1,69 @@
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.io.OutputStream
+
 class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
-    val MatrixSize = MatrixLegacy.size
-    val Matrix=Array(MatrixSize, {IntArray(MatrixSize)})
-    var counter=0
-    val assigmentRows= IntArray(MatrixSize)// Index of the column selected by every row (The final result)
-    val occupiedCols=BooleanArray(MatrixSize)//Verify that all column are occupied, used in the optimization step
+    private val matrixSize = MatrixLegacy.size
+    private val Matrix=Array(matrixSize, {IntArray(matrixSize)})
+    private var counter=0
+    private val assignmentRows= IntArray(matrixSize)// Index of the column selected by every row (The final result)
+    private val occupiedCols=BooleanArray(matrixSize)//Verify that all column are occupied, used in the optimization step
     fun StepByStep(): IntArray {
-        for(row in 0 until MatrixSize)
+        for(row in 0 until matrixSize)
             Matrix[row] = MatrixLegacy[row].clone()
         Step1()
         Step2()
         Step3()
-        Optimization()
-
-        return assigmentRows
+        optimization()
+        return assignmentRows
     }
+    fun StepByStep(Name: String): IntArray {
+        print("Enter name of input file:")
+        val file = File("${readLine()}.txt")
+        file.writeText(Name)
+        for(row in 0 until matrixSize)
+            Matrix[row] = MatrixLegacy[row].clone()
+        Step1()
+        file.appendText("\nStep1")
+        writeDataToFile(file)
+        Step2()
+        file.appendText("\nStep2")
+        writeDataToFile(file)
+        Step3(file)
+        optimization()
+        return assignmentRows
 
-    fun Checker(): Boolean {
-        var flag = 0
-        for (j in 0 until MatrixSize) {
-            for (i in 0 until MatrixSize) {
-                if (Matrix[i][j] == 0) {
-                    flag++
-                    break
-                }
-            }
-        }
-        return true
+
     }
+    fun writeDataToFile(file:File){
+        for(i in 0 until Matrix.size)
+            file.appendText("\n${Matrix[i]}")
+    }
+//    fun Checker(): Boolean {
+//        var flag = 0
+//        for (j in 0 until matrixSize) {
+//            for (i in 0 until matrixSize) {
+//                if (Matrix[i][j] == 0) {
+//                    flag++
+//                    break
+//                }
+//            }
+//        }
+//        return true
+//    }
 
 
     //Reduce the rows by subtracting
     // the minimum value of each row from that row.
-    fun Step1() {
+    private fun Step1() {
         var min:Int
-        for (i in 0 until MatrixSize) {
+        for (i in 0 until matrixSize) {
             min = Matrix[i][0]
-            for (j in 1 until MatrixSize)
+            for (j in 1 until matrixSize)
                 if (Matrix[i][j] < min)
                     min = Matrix[i][j]
-            for (j in 0 until MatrixSize)
+            for (j in 0 until matrixSize)
                 Matrix[i][j]-=min
         }
     }
@@ -47,29 +72,28 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
 //If there are columns without a zero,
     // reduce the columns by subtracting the minimum value of each
     // column from that column.
-    fun Step2() {
+private fun Step2() {
     var min:Int
-    for (j in 0 until MatrixSize) {
+    for (j in 0 until matrixSize) {
         min = Matrix[0][j]
-        for (i in 1 until MatrixSize)
+        for (i in 1 until matrixSize)
             if (Matrix[i][j] < min)
                 min = Matrix[i][j]
-        for (i in 0 until MatrixSize)
+        for (i in 0 until matrixSize)
             Matrix[i][j]-=min
     }
     }
 
-    fun countZeroesInRow(i:Int): Int {
-        return Matrix[i].count { it==0 }
-    }
-    fun countZeroesInColumn(j: Int):Int{
+    private fun countZeroesInRow(i:Int)= Matrix[i].count { it==0 }
+
+    private fun countZeroesInColumn(j: Int):Int{
         var result=0
-        for(i in 0 until MatrixSize)
+        for(i in 0 until matrixSize)
             if(Matrix[i][j]==0)
                 result++
         return result
     }
-    fun Step3() {
+    private fun Step3() {
 //        println("------------")
 //        for(i in 0 until Matrix.size){
 //            for (j in 0 until Matrix.size) {
@@ -91,10 +115,10 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
         var n=0
         var VerHor: Int? =null
         //counting zeroes
-        for(row in 0 until MatrixSize)
-            loop@ for (column in 0 until MatrixSize)
+        for(row in 0 until matrixSize)
+            loop@ for (column in 0 until matrixSize)
                 if (Matrix[row][column]==0) {
-                    VerHor=VerticalOrHorizontal(row,column)
+                    VerHor=verticalOrHorizontal(row,column)
                     when{
                         coveredColumns.contains(column) && coveredRows.contains(row)->
                             continue@loop
@@ -112,7 +136,7 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
 
                 }
 
-        if(counter==MatrixSize)
+        if(counter==matrixSize)
             return
         counter++
 
@@ -122,16 +146,16 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
         // If an element is covered twice,
         // add the minimum element to it twice.
         min= Int.MAX_VALUE
-        for (i in 0 until MatrixSize)
-            for (j in 0 until MatrixSize) {
+        for (i in 0 until matrixSize)
+            for (j in 0 until matrixSize) {
                 if (!((coveredColumns.contains(j) || coveredRows.contains(i))))
                     if (Matrix[i][j] < min)
                         min = Matrix[i][j]
             }
 
 
-        for (i in 0 until MatrixSize)
-                for (j in 0 until MatrixSize)
+        for (i in 0 until matrixSize)
+                for (j in 0 until matrixSize)
                     when {
                         (coveredColumns.contains(j) && coveredRows.contains(i))-> //if zero covered twice
                             Matrix[i][j] += min*2
@@ -142,37 +166,119 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
             //Subtract the minimum element
             // from every element in the matrix.
         min= Int.MAX_VALUE
-            for (i in 0 until MatrixSize)
-                for (j in 0 until MatrixSize)
+            for (i in 0 until matrixSize)
+                for (j in 0 until matrixSize)
                     if (Matrix[i][j]<min)
                         min=Matrix[i][j]
-            for (i in 0 until MatrixSize)  //Subtract the minimum element
-                for (j in 0 until MatrixSize)
+            for (i in 0 until matrixSize)  //Subtract the minimum element
+                for (j in 0 until matrixSize)
                 Matrix[i][j]-=min
 
         return Step3()
     }
+    private fun Step3(file:File) {
+//        println("------------")
+//        for(i in 0 until Matrix.size){
+//            for (j in 0 until Matrix.size) {
+//                print("${Matrix[i][j]}\t")
+//            }
+//            print("\n")
+//        }
 
-    fun VerticalOrHorizontal(row: Int, column: Int)= (compareValues(countZeroesInColumn(column),countZeroesInRow(row)))
+        val coveredColumns = mutableListOf<Int>()
+        val coveredRows = mutableListOf<Int>()
+
+        var min= Int.MAX_VALUE
+        var zeroMaxI=0
+        var zeroMaxInColumn=0
+        var zeroMaxJ=0
+        var toCoverColumn: Int? = null
+        var toCoverRow: Int? =null
+        var zeroesUncoveredRow= mutableListOf<Int>()
+        var zeroesUncoveredColumn= mutableListOf<Int>()
+        var n=0
+        var VerHor: Int? =null
+        //counting zeroes
+        for(row in 0 until matrixSize)
+            loop@ for (column in 0 until matrixSize)
+                if (Matrix[row][column]==0) {
+                    VerHor=verticalOrHorizontal(row,column)
+                    when{
+                        coveredColumns.contains(column) && coveredRows.contains(row)->
+                            continue@loop
+                        coveredColumns.contains(column)->
+                            continue@loop
+                        coveredRows.contains(row)->
+                            continue@loop
+                        else->
+                            if (VerHor>0)
+                                coveredColumns.add(column)
+                            else
+                                coveredRows.add(row)
+
+                    }
+
+                }
+
+        if(counter==matrixSize)
+            return
+        counter++
+
+
+        //Add the minimum uncovered element
+        // to every covered element.
+        // If an element is covered twice,
+        // add the minimum element to it twice.
+        min= Int.MAX_VALUE
+        for (i in 0 until matrixSize)
+            for (j in 0 until matrixSize) {
+                if (!((coveredColumns.contains(j) || coveredRows.contains(i))))
+                    if (Matrix[i][j] < min)
+                        min = Matrix[i][j]
+            }
+
+
+        for (i in 0 until matrixSize)
+            for (j in 0 until matrixSize)
+                when {
+                    (coveredColumns.contains(j) && coveredRows.contains(i))-> //if zero covered twice
+                        Matrix[i][j] += min*2
+                    (coveredColumns.contains(j) || coveredRows.contains(i))->
+                        Matrix[i][j] += min
+                }
+
+        //Subtract the minimum element
+        // from every element in the matrix.
+        min= Int.MAX_VALUE
+        for (i in 0 until matrixSize)
+            for (j in 0 until matrixSize)
+                if (Matrix[i][j]<min)
+                    min=Matrix[i][j]
+        for (i in 0 until matrixSize)  //Subtract the minimum element
+            for (j in 0 until matrixSize)
+                Matrix[i][j]-=min
+
+        return Step3()
+    }
+    private fun verticalOrHorizontal(row: Int, column: Int)= (compareValues(countZeroesInColumn(column),countZeroesInRow(row))) //check where is more zeroes per line
 //        1->1 //Column>Row
 //        -1->-1//Column<Row
 //        0->0//Column==Row
 
-    fun Optimization(row:Int):Boolean {
-        if (row == assigmentRows.size) // If all rows were assigned a cell
+    private fun optimization(row:Int):Boolean { //"row" - number of row to assign
+        if (row == assignmentRows.size) // If all rows were assigned a cell
             return true
-        for (column in 0 until assigmentRows.size) {
+        for (column in 0 until assignmentRows.size) {
             if (Matrix[row][column] == 0 && occupiedCols[column] == false) {
-                assigmentRows[row] = column
+                assignmentRows[row] = column// Assign the current row the current column cell
                 occupiedCols[column] = true // Mark the column as reserved
-                if (Optimization(row+1))
+                if (optimization(row+1)) // If the next rows were assigned successfully a cell from a unique column, return true
                     return true
-                occupiedCols[column]=false
+                occupiedCols[column]=false // If the next rows were not able to get a cell, go back and try for the previous rows another cell from another column
             }
         }
         return false
     }
-    fun Optimization():Boolean=Optimization(0)
-
+    private fun optimization():Boolean= optimization(0)
 }
 
