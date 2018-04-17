@@ -3,7 +3,7 @@ class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String) {
     private var hungarianAssignment: IntArray? =null
        get() {
            if (field==null) {
-               println("Should it be traced in file? (type YES)")
+               println("Would you like to trace it (type YES)")
                field = if (readLine()=="YES")
                    HungarianAlgorithm(Matrix).StepByStep(Name)
                else

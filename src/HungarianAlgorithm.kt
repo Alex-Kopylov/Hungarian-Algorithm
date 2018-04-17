@@ -15,7 +15,7 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
         Step1()
         Step2()
         Step3()
-        optimization()
+        optimization(0)
         return assignmentRows
     }
     fun StepByStep(Name: String): IntArray {
@@ -31,14 +31,19 @@ class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
         file.appendText("\nStep2")
         writeDataToFile(file)
         Step3(file)
-        optimization()
+        optimization(0)
+        writeDataToFile(file)
         return assignmentRows
 
 
     }
     fun writeDataToFile(file:File){
-        for(i in 0 until Matrix.size)
-            file.appendText("\n${Matrix[i]}")
+        file.appendText("\n")
+        for(i in 0 until Matrix.size) {
+            for (j in 0 until Matrix.size)
+                file.appendText("${Matrix[i][j]}\t")
+            file.appendText("\n")
+        }
     }
 //    fun Checker(): Boolean {
 //        var flag = 0
@@ -219,6 +224,8 @@ private fun Step2() {
                     }
 
                 }
+        file.appendText("\nStep3.$counter")
+        writeDataToFile(file)
 
         if(counter==matrixSize)
             return
@@ -279,6 +286,5 @@ private fun Step2() {
         }
         return false
     }
-    private fun optimization():Boolean= optimization(0)
 }
 

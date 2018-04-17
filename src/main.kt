@@ -52,7 +52,6 @@ object MainKt {
     private fun addNewMatrix() {
         Matrices.add(newMatrix())
     }
-    private fun addNewMatrux
     private fun newMatrix(): MatrixClass {
         var size: Int
         while (true) {
@@ -77,7 +76,7 @@ object MainKt {
         while (i < size) {
             print("[$i]\t")
             try {
-                matrix[i] = readLine()!!.split(",", " ").map { it.toInt() }.toIntArray()
+                matrix[i] = readLine()!!.split(",", " ","\t").map { it.toInt() }.toIntArray()
                 if (matrix[i].size != size) {
                     throw
                     Exception("Not enough elements (Matrix[$i].size:${matrix[i].size} != $size)")
