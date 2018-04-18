@@ -1,41 +1,43 @@
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 
-class HungarianAlgorithm(private val MatrixLegacy:Array<IntArray>) {
-    private val matrixSize = MatrixLegacy.size
-    private val Matrix=Array(matrixSize, {IntArray(matrixSize)})
+class HungarianAlgorithm(private val Matrix:Array<IntArray>) {
+    private val matrixSize = Matrix.size
     private var counter=0
     private val assignmentRows= IntArray(matrixSize)// Index of the column selected by every row (The final result)
     private val occupiedCols=BooleanArray(matrixSize)//Verify that all column are occupied, used in the optimization step
     fun StepByStep(): IntArray {
-        for(row in 0 until matrixSize)
-            Matrix[row] = MatrixLegacy[row].clone()
         Step1()
+        if ( optimization(0))
+            return assignmentRows
         Step2()
+        if ( optimization(0))
+            return assignmentRows
         Step3()
-        optimization(0)
         return assignmentRows
     }
     fun StepByStep(Name: String): IntArray {
         print("Enter name of input file:")
         val file = File("${readLine()}.txt")
         file.writeText(Name)
-        for(row in 0 until matrixSize)
-            Matrix[row] = MatrixLegacy[row].clone()
+
+        file.appendText("\nStep1")
+        if ( optimization(0))
+            return assignmentRows
         Step1()
+
         file.appendText("\nStep1")
         writeDataToFile(file)
+        if ( optimization(0))
+            return assignmentRows
         Step2()
         file.appendText("\nStep2")
         writeDataToFile(file)
-        Step3(file)
-        optimization(0)
-        writeDataToFile(file)
+        if ( optimization(0))
+            return assignmentRows
+        while (!optimization(0))
+                    Step3(file)
+
         return assignmentRows
-
-
     }
     fun writeDataToFile(file:File){
         file.appendText("\n")
@@ -182,54 +184,25 @@ private fun Step2() {
         return Step3()
     }
     private fun Step3(file:File) {
-//        println("------------")
-//        for(i in 0 until Matrix.size){
-//            for (j in 0 until Matrix.size) {
-//                print("${Matrix[i][j]}\t")
-//            }
-//            print("\n")
-//        }
-
         val coveredColumns = mutableListOf<Int>()
         val coveredRows = mutableListOf<Int>()
-
-        var min= Int.MAX_VALUE
-        var zeroMaxI=0
-        var zeroMaxInColumn=0
-        var zeroMaxJ=0
-        var toCoverColumn: Int? = null
-        var toCoverRow: Int? =null
-        var zeroesUncoveredRow= mutableListOf<Int>()
-        var zeroesUncoveredColumn= mutableListOf<Int>()
-        var n=0
+        var min: Int
         var VerHor: Int? =null
+
         //counting zeroes
         for(row in 0 until matrixSize)
             loop@ for (column in 0 until matrixSize)
-                if (Matrix[row][column]==0) {
-                    VerHor=verticalOrHorizontal(row,column)
-                    when{
-                        coveredColumns.contains(column) && coveredRows.contains(row)->
-                            continue@loop
-                        coveredColumns.contains(column)->
-                            continue@loop
-                        coveredRows.contains(row)->
-                            continue@loop
-                        else->
-                            if (VerHor>0)
-                                coveredColumns.add(column)
-                            else
-                                coveredRows.add(row)
-
-                    }
-
+            if (Matrix[row][column]==0 &&!(coveredColumns.contains(column) || coveredRows.contains(row))) {
+                VerHor=verticalOrHorizontal(row,column)
+                if(VerHor>0)
+                    coveredColumns.add(column)
+                else
+                    coveredRows.add(row)
                 }
-        file.appendText("\nStep3.$counter")
-        writeDataToFile(file)
 
-        if(counter==matrixSize)
+        if ( optimization(0))
             return
-        counter++
+
 
 
         //Add the minimum uncovered element
@@ -265,7 +238,12 @@ private fun Step2() {
             for (j in 0 until matrixSize)
                 Matrix[i][j]-=min
 
-        return Step3()
+
+        file.appendText("\nStep3.$counter")
+        writeDataToFile(file)
+
+
+        return Step3(file)
     }
     private fun verticalOrHorizontal(row: Int, column: Int)= (compareValues(countZeroesInColumn(column),countZeroesInRow(row))) //check where is more zeroes per line
 //        1->1 //Column>Row
