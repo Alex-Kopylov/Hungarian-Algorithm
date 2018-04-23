@@ -90,7 +90,7 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
     }
 
 
-//If there are columns without a zero,
+    //If there are columns without a zero,
     // reduce the columns by subtracting the minimum value of each
     // column from that column.
     private fun Step2() {
@@ -120,7 +120,6 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         var min: Int
         var VerHor: Int
 
-        //counting zeroes
         for(row in 0 until matrixSize)
             loop@ for (column in 0 until matrixSize)
             if (Matrix[row][column]==0 &&!(coveredColumns.contains(column) || coveredRows.contains(row))) {

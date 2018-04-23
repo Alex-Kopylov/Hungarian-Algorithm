@@ -1,19 +1,20 @@
 import java.io.File
 import kotlin.system.exitProcess
-
-object MainKt {
-    private val Matrices: MutableList<MatrixClass> = mutableListOf()
-    //    val file: InputStream = File("Name.txt").inputStream()
+object Main {
     @JvmStatic
     fun main(args: Array<String>) {
-        while (true) {
-            printMenu()
-            println("Choice:")
-            menu(readLine()!!)
-        }
+    while (true) {
+        printMenu()
+        println("Choice:")
+        menu(readLine()!!)
     }
+}
 
-    private fun printMenu() {
+    private val Matrices: MutableList<Matrix> = mutableListOf()
+
+
+
+     private fun printMenu() {
         println("1-> Add new matrix\n" +
                 "2-> Print matrix\n" +
                 "3-> Print matrices\n" +
@@ -21,7 +22,7 @@ object MainKt {
                 "Any other-> Exit")
     }
 
-    private fun menu(choice: Any) {
+     private fun menu(choice: Any) {
         when (choice) {
             "1" -> Matrices.add(newMatrix())
             "2" -> {
@@ -56,12 +57,12 @@ object MainKt {
                 printMatrix()
             }
             "4" -> {
-                print("Enter name of file: ")
                 val file:File
                 val Matrix:Array<IntArray>
-
                  try {
+                     print("Enter name of file: ")
                      file=File("${readLine()}.txt")
+                     println("Your file is: ${file.name} Trying to get matrix...")
                      val list = file.readLines()
                      Matrix=Array(list.size, { i -> list[i].removeSurrounding("[", "]").split(",", " ", "\t").map { it.toInt() }.toIntArray() })
                 }
@@ -69,6 +70,7 @@ object MainKt {
                      println("ERROR: $e")
                      return
                  }
+                println("Matrix loaded successfully")
                 Matrices.add(newMatrix(Matrix))
                  }
             else -> exitProcess(0)
@@ -76,9 +78,9 @@ object MainKt {
         Matrices.last().writeHungarianInFile()
     }
 
-    private fun newMatrix(Matrix:Array<IntArray>): MatrixClass=MatrixClass(Matrix, setNameOfMatrix(), setFile())
+    private fun newMatrix(Matrix:Array<IntArray>): Matrix=Matrix(Matrix, setNameOfMatrix(), setFile())
 
-    private fun newMatrix(): MatrixClass {
+    private fun newMatrix(): Matrix {
         var size: Int
         while (true) {
             println("Enter size of matrix")
@@ -112,7 +114,7 @@ object MainKt {
             }
             i++
         }
-        return MatrixClass(matrix, setNameOfMatrix(), setFile())
+        return Matrix(matrix, setNameOfMatrix(), setFile())
     }
 
     private fun printMatrix() {

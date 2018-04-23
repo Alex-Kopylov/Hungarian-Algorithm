@@ -1,6 +1,6 @@
 import java.io.File
 
-class MatrixClass(private val Matrix:Array<IntArray>, private val Name:String, private val file: File?) {
+class Matrix(private val Matrix:Array<IntArray>, private val Name:String, private val file: File?) {
     init {
         if (file!=null) {
             file.writeText("Name:$Name\n")
