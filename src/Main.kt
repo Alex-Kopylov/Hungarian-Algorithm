@@ -1,20 +1,11 @@
 import java.io.File
 import kotlin.system.exitProcess
 object Main {
-    @JvmStatic
-    fun main(args: Array<String>) {
-    while (true) {
-        printMenu()
-        println("Choice:")
-        menu(readLine()!!)
-    }
-}
-
     private val Matrices: MutableList<Matrix> = mutableListOf()
 
 
 
-     private fun printMenu() {
+     internal fun printMenu() {
         println("1-> Add new matrix\n" +
                 "2-> Print matrix\n" +
                 "3-> Print matrices\n" +
@@ -22,7 +13,7 @@ object Main {
                 "Any other-> Exit")
     }
 
-     private fun menu(choice: Any) {
+     internal fun menu(choice: Any) {
         when (choice) {
             "1" -> Matrices.add(newMatrix())
             "2" -> {
