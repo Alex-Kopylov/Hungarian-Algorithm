@@ -13,7 +13,8 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         if ( tryToAssign(0))
             return assignmentRows
         Step2()
-        tryToAssign(0)
+        if ( tryToAssign(0))
+            return assignmentRows
         Step3()
         return assignmentRows
     }
@@ -35,7 +36,10 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         Step2()
         writeDataToFile(file)
 
-       tryToAssign(0,file)
+        if ( tryToAssign(0,file)) {
+            writeDataToFileAssignment(file)
+            return assignmentRows
+        }
             Step3(file)
 
         writeDataToFileAssignment(file)
@@ -117,11 +121,11 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
     private fun Step3(file:File) {
         val coveredColumns = mutableListOf<Int>()
         val coveredRows = mutableListOf<Int>()
-        var min: Int
+        var min= Int.MAX_VALUE
         var VerHor: Int
 
         for(row in 0 until matrixSize)
-            loop@ for (column in 0 until matrixSize)
+            for (column in 0 until matrixSize)
             if (Matrix[row][column]==0 &&!(coveredColumns.contains(column) || coveredRows.contains(row))) {
                 VerHor=verticalOrHorizontal(row,column)
                 if(VerHor>0)
@@ -136,7 +140,6 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         // to every covered element.
         // If an element is covered twice,
         // add the minimum element to it twice.
-        min= Int.MAX_VALUE
         for (i in 0 until matrixSize)
             for (j in 0 until matrixSize) {
                 if (!((coveredColumns.contains(j) || coveredRows.contains(i))))
@@ -177,12 +180,12 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
     private fun Step3() {
         val coveredColumns = mutableListOf<Int>()
         val coveredRows = mutableListOf<Int>()
-        var min: Int
+        var min= Int.MAX_VALUE
         var VerHor: Int
 
         //counting zeroes
         for(row in 0 until matrixSize)
-            loop@ for (column in 0 until matrixSize)
+            for (column in 0 until matrixSize)
                 if (Matrix[row][column]==0 &&!(coveredColumns.contains(column) || coveredRows.contains(row))) {
                     VerHor=verticalOrHorizontal(row,column)
                     if(VerHor>0)
@@ -196,7 +199,6 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         // to every covered element.
         // If an element is covered twice,
         // add the minimum element to it twice.
-        min= Int.MAX_VALUE
         for (i in 0 until matrixSize)
             for (j in 0 until matrixSize) {
                 if (!((coveredColumns.contains(j) || coveredRows.contains(i))))
@@ -257,7 +259,7 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
             if (Matrix[row][column] == 0 && occupiedCols[column] == false) {
                 assignmentRows[row] = column// Assign the current row the current column cell
                 occupiedCols[column] = true // Mark the column as reserved
-                if (tryToAssign(row+1)) // If the next rows were assigned successfully a cell from a unique column, return true
+                if (tryToAssign(row+1,file)) // If the next rows were assigned successfully a cell from a unique column, return true
                     return true
                 occupiedCols[column]=false // If the next rows were not able to get a cell, go back and try for the previous rows another cell from another column
             }
@@ -266,4 +268,3 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         return false
     }
 }
-
