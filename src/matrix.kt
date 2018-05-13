@@ -1,6 +1,7 @@
 import java.io.File
 
 class Matrix(private val Matrix:Array<IntArray>, private val Name:String, private val file: File?) {
+    fun getName()=this.Name
     init {
         if (file!=null) {
             file.writeText("Name:$Name\n")
@@ -20,40 +21,52 @@ class Matrix(private val Matrix:Array<IntArray>, private val Name:String, privat
             else ->
                 HungarianAlgorithm(Matrix).StepByStep()
         }
-        fun printMatrix(){
+    val assigmentSum=getSum()
+    private fun getSum(): Int {
+        var sum = 0
+        for (i in 0 until Matrix.size)
+            for (j in 0 until Matrix.size)
+                if (j == hungarianAssignment[i])
+                    sum += Matrix[i][j]
+            return sum
+    }
+        fun printMatrix() {
             println("Name:$Name")
-            for(i in 0 until Matrix.size){
+            for (i in 0 until Matrix.size) {
                 for (j in 0 until Matrix.size)
                     print("${Matrix[i][j]}\t")
-                print("\n")
+                println()
             }
         }
-        fun printHungarian(){
+
+        fun printHungarian() {
+
             println("Hungarian Algorithm Assignment:")
-            for(i in 0 until Matrix.size){
+            for (i in 0 until Matrix.size) {
                 for (j in 0 until Matrix.size)
-                    if (j== hungarianAssignment[i])
+                    if (j == hungarianAssignment[i])
                         print("[${Matrix[i][j]}]\t")
                     else
                         print("${Matrix[i][j]}\t")
-                print("\n")
+                println()
             }
+            println("Minimum possible cost:$assigmentSum")
         }
-        fun getName()=Name
-    fun writeHungarianInFile()
-    {
-        if (file!=null)
-        {
-           file.appendText("\nHungarian Algorithm Assignment:\n")
-            for(i in 0 until Matrix.size) {
-                for (j in 0 until Matrix.size)
-                    if(j== hungarianAssignment[i])
-                        file.appendText("[${Matrix[i][j]}]\t")
-                    else
-                        file.appendText("${Matrix[i][j]}\t")
-                file.appendText("\n")
+
+        fun writeHungarianInFile() {
+            if (file != null) {
+                file.appendText("\nHungarian Algorithm Assignment:\n")
+                for (i in 0 until Matrix.size) {
+                    for (j in 0 until Matrix.size)
+                        if (j == hungarianAssignment[i])
+                            file.appendText("[${Matrix[i][j]}]\t")
+                        else
+                            file.appendText("${Matrix[i][j]}\t")
+                    file.appendText("\n")
+                }
+                file.appendText("Minimum possible cost:$assigmentSum")
             }
+
         }
     }
 
-    }
