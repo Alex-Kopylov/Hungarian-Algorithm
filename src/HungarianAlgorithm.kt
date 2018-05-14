@@ -1,13 +1,20 @@
 import java.io.File
 
-class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
+class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>,private val maximum:Boolean) {
     private val matrixSize = MatrixOriginal.size
-    private var Matrix=Array(matrixSize, { i-> MatrixOriginal[i].clone()})
+    private var Matrix=Array(matrixSize, {i->
+            when (maximum) {
+                true-> {
+                    MatrixOriginal[i].clone().map { it*-1 }.toIntArray()
+                }
+                false->MatrixOriginal[i].clone()
+            }
+    })
     private var counter=1
     private val assignmentRows= IntArray(matrixSize)// Index of the column selected by every row (The final result)
     private val occupiedCols=BooleanArray(matrixSize)//Verify that all column are occupied, used in the tryToAssign step
     fun StepByStep(): IntArray {
-        if ( tryToAssign(0))
+        if (!maximum && tryToAssign(0))
             return assignmentRows
         Step1()
         if ( tryToAssign(0))
@@ -19,30 +26,23 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         return assignmentRows
     }
     fun StepByStep(file:File): IntArray {
-        if ( tryToAssign(0,file)) {
-            writeDataToFileAssignment(file)
+        if (!maximum && tryToAssign(0))
             return assignmentRows
-        }
+
         file.appendText("\nStep1")
         Step1()
         writeDataToFile(file)
 
-
-        if ( tryToAssign(0,file)) {
-            writeDataToFileAssignment(file)
-            return assignmentRows
-        }
         file.appendText("\nStep2")
         Step2()
         writeDataToFile(file)
 
-        if ( tryToAssign(0,file)) {
-            writeDataToFileAssignment(file)
+        if ( tryToAssign(0))
             return assignmentRows
-        }
+        writeDataToFileAssignment(file)
             Step3(file)
 
-        writeDataToFileAssignment(file)
+
         return assignmentRows
     }
     private fun writeDataToFile(file:File){
@@ -67,7 +67,7 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
     }
     private fun writeDataToFileCovered(file:File, coveredColumns:MutableList<Int>, coveredRows:MutableList<Int>){
         file.appendText("\nCovering lines with zeroes:\n")
-        file.appendText("Covered rows:$coveredRows\nCovered columns:$coveredColumns")
+        file.appendText("Covered rows:${coveredRows.map { it+1 }}\nCovered columns:${coveredColumns.map { it+1 }}")
         writeDataToFile(file)
 //        for(i in 0 until Matrix.size) {
 //            for (j in 0 until Matrix.size)
@@ -172,7 +172,7 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
         file.appendText("\nStep3.$counter")
         counter++
         writeDataToFile(file)
-        if (tryToAssign(0,file))
+        if (tryToAssign(0))
             return
 
         return Step3(file)
@@ -250,21 +250,6 @@ class HungarianAlgorithm(private val MatrixOriginal:Array<IntArray>) {
                 occupiedCols[column]=false // If the next rows were not able to get a cell, go back and try for the previous rows another cell from another column
             }
         }
-        return false
-    }
-    private fun tryToAssign(row:Int,file:File):Boolean { //"row" - number of row to assign
-        if (row == assignmentRows.size) // If all rows were assigned a cell; assignmentRows.size==Matrix.size
-            return true
-        for (column in 0 until assignmentRows.size) {
-            if (Matrix[row][column] == 0 && occupiedCols[column] == false) {
-                assignmentRows[row] = column// Assign the current row the current column cell
-                occupiedCols[column] = true // Mark the column as reserved
-                if (tryToAssign(row+1,file)) // If the next rows were assigned successfully a cell from a unique column, return true
-                    return true
-                occupiedCols[column]=false // If the next rows were not able to get a cell, go back and try for the previous rows another cell from another column
-            }
-        }
-        writeDataToFileAssignment(file)
         return false
     }
 }

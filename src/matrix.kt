@@ -1,6 +1,8 @@
 import java.io.File
 
 class Matrix(private val Matrix:Array<IntArray>, private val Name:String, private val file: File?) {
+   private var maxOrMinAssignment: Boolean? = null
+
     fun getName()=this.Name
     init {
         if (file!=null) {
@@ -12,15 +14,30 @@ class Matrix(private val Matrix:Array<IntArray>, private val Name:String, privat
                 file.appendText("\n")
             }
         }
-        println("Would you like to trace it (type YES)")
+
     }
-    private var hungarianAssignment =
-        when (readLine()) {
-            "YES" ->
-                HungarianAlgorithm(Matrix).StepByStep(file!!)
-            else ->
-                HungarianAlgorithm(Matrix).StepByStep()
+    private fun hungarianAlgorithmParameters(): IntArray {
+        println("Would you like to trace it (type YES)")
+        val trace=
+                when(readLine()){
+                    "YES"-> true
+                    else -> false
+                }
+        println("Would you like to find MAXIMUM possible (type YES)")
+        maxOrMinAssignment=
+                when(readLine()){
+                    "YES"-> true
+                    else -> false
+                }
+        return when{
+            (trace)->
+                HungarianAlgorithm(Matrix, maxOrMinAssignment!!).StepByStep(file!!)
+            else->
+                HungarianAlgorithm(Matrix, maxOrMinAssignment!!).StepByStep()
         }
+    }
+    private val hungarianAssignment =hungarianAlgorithmParameters()
+
     val assigmentSum=getSum()
     private fun getSum(): Int {
         var sum = 0
@@ -50,7 +67,10 @@ class Matrix(private val Matrix:Array<IntArray>, private val Name:String, privat
                         print("${Matrix[i][j]}\t")
                 println()
             }
-            println("Minimum possible cost:$assigmentSum")
+            if (maxOrMinAssignment!!)
+                println("Maximum possible cost:$assigmentSum")
+            else
+                println("Minimum possible cost:$assigmentSum")
         }
 
         fun writeHungarianInFile() {
@@ -64,7 +84,11 @@ class Matrix(private val Matrix:Array<IntArray>, private val Name:String, privat
                             file.appendText("${Matrix[i][j]}\t")
                     file.appendText("\n")
                 }
-                file.appendText("Minimum possible cost:$assigmentSum")
+                if (maxOrMinAssignment!!)
+                    file.appendText("Maximum possible cost:$assigmentSum")
+                else
+                    file.appendText("Minimum possible cost:$assigmentSum")
+
             }
 
         }
