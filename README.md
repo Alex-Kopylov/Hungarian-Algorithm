@@ -1,4 +1,4 @@
-# Hungarian_algorithm
+# Hungarian algorithm
 Implementation of The Hungarian Algorithm for Assignment Problem in Kotlin
 
 Run via:
