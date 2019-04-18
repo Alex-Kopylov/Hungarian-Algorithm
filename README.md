@@ -1,5 +1,5 @@
 # Hungarian algorithm
-Implementation of The Hungarian Algorithm for Assignment Problem in Kotlin
+Implementation of The Hungarian Algorithm for an Assignment Problem in Kotlin
 
 Run via:
 Hungarian algorithm.jar
